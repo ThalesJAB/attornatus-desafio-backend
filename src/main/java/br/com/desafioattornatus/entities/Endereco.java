@@ -1,13 +1,22 @@
 package br.com.desafioattornatus.entities;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Objects;
 
+import javax.swing.text.MaskFormatter;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.desafioattornatus.entities.enums.TipoEndereco;
+import br.com.desafioattornatus.entities.interfaces.Cep;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 public class Endereco implements Serializable {
@@ -17,10 +26,21 @@ public class Endereco implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String logradouro;
-	private String cep;
-	private Integer numero;
-	private String cidade;
+    @NotBlank(message = "Campo LOGRADOURO é requerido")
+    private String logradouro;
+
+    @NotBlank(message = "Campo CEP é requerido")
+    @Cep
+    private String cep;
+
+    @NotNull(message = "Campo NÚMERO é requerido")
+    @Positive(message = "O campo NÚMERO deve ser um número inteiro positivo")
+    private Integer numero;
+
+    @NotBlank(message = "Campo CIDADE é requerido")
+    private String cidade;
+    
+    @NotNull(message = "Campo ENDEREÇO é requerido")
 	private Integer tipoEndereco;
 
 	public Endereco() {
@@ -54,6 +74,7 @@ public class Endereco implements Serializable {
 	}
 
 	public String getCep() {
+		cep = getCepFormatado();
 		return cep;
 	}
 
@@ -86,6 +107,17 @@ public class Endereco implements Serializable {
 			this.tipoEndereco = tipoEndereco.getCodigo();
 		}
 	}
+	
+	@JsonIgnore
+    public String getCepFormatado() {
+        try {
+            MaskFormatter formatter = new MaskFormatter("#####-###");
+            formatter.setValueContainsLiteralCharacters(false);
+            return formatter.valueToString(this.cep);
+        } catch (ParseException e) {
+            return this.cep;
+        }
+    }
 
 	@Override
 	public int hashCode() {

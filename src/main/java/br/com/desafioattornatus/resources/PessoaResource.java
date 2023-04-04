@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.desafioattornatus.entities.Pessoa;
 import br.com.desafioattornatus.services.PessoaService;
+import jakarta.validation.Valid;
 
 @CrossOrigin("*")
 @RestController
@@ -41,7 +42,7 @@ public class PessoaResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Pessoa> create(@RequestBody Pessoa obj) {
+	public ResponseEntity<Pessoa> create(@Valid @RequestBody Pessoa obj) {
 		obj = service.create(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).body(obj);

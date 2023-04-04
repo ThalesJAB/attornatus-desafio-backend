@@ -71,23 +71,6 @@ public class EnderecoService {
 
 		return repository.save(enderecoAtualizado);
 	}
-	/*
-	 * public List<Endereco> updateAll(List<Endereco> listObj) {
-	 * 
-	 * for (Endereco endereco : listObj) { Endereco objDB =
-	 * findById(endereco.getId()); objDB.setCep(endereco.getCep());
-	 * objDB.setCidade(endereco.getCidade());
-	 * objDB.setLogradouro(endereco.getLogradouro());
-	 * objDB.setNumero(endereco.getNumero());
-	 * objDB.setTipoEndereco(endereco.getTipoEndereco()); ;
-	 * 
-	 * repository.save(objDB); }
-	 * 
-	 * return listObj;
-	 * 
-	 * }
-	 * 
-	 */
 
 	public void delete(Long idPessoa, Long idEndereco) {
 		Pessoa pessoa = pessoaService.findById(idPessoa);

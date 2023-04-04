@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.desafioattornatus.entities.Endereco;
 import br.com.desafioattornatus.services.EnderecoService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/pessoas/{idPessoa}/enderecos")
@@ -33,7 +34,7 @@ public class EnderecoResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<Endereco> create(@PathVariable Long idPessoa, @RequestBody Endereco endereco) {
+	public ResponseEntity<Endereco> create(@Valid @PathVariable Long idPessoa, @RequestBody Endereco endereco) {
 
 		Endereco enderecoNovo = service.create(idPessoa, endereco);
 
@@ -42,7 +43,7 @@ public class EnderecoResource {
 	}
 
 	@PutMapping(value = "/{idEndereco}")
-	public ResponseEntity<Endereco> update(@PathVariable Long idPessoa, @PathVariable Long idEndereco,
+	public ResponseEntity<Endereco> update(@Valid @PathVariable Long idPessoa, @PathVariable Long idEndereco,
 			@RequestBody Endereco obj) {
 		obj = service.update(idPessoa, idEndereco, obj);
 

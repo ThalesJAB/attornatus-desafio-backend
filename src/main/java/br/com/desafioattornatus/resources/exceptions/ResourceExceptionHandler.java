@@ -1,6 +1,7 @@
 package br.com.desafioattornatus.resources.exceptions;
 
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,14 +49,26 @@ public class ResourceExceptionHandler {
 		}
 
 		return ResponseEntity.status(status).body(error);
+
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<StandardError> handleHttpMessageNotReadable(HttpMessageNotReadableException e,
 			HttpServletRequest request) {
+
 		HttpStatus status = HttpStatus.BAD_REQUEST;
+
 		StandardError error = new StandardError(Instant.now(), status.value(), "Bad Request", e.getMessage(),
 				request.getRequestURI());
+
+		Throwable mostSpecificCause = e.getMostSpecificCause();
+
+		if (mostSpecificCause instanceof DateTimeParseException) {
+			error.setError("Erro na validação dos campos");
+			error.setMessage("Formato de data incorreto. Use o formato 'yyyy-MM-dd");
+
+		}
+
 		return ResponseEntity.status(status).body(error);
 	}
 }
