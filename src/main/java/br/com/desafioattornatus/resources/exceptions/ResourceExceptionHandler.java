@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import br.com.desafioattornatus.services.exceptions.DataIntegrityViolationException;
+import br.com.desafioattornatus.services.exceptions.EnderecoException;
 import br.com.desafioattornatus.services.exceptions.ObjectNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -70,5 +71,18 @@ public class ResourceExceptionHandler {
 		}
 
 		return ResponseEntity.status(status).body(error);
+	}
+	
+	
+	@ExceptionHandler(EnderecoException.class)
+	public ResponseEntity<StandardError> enderecoError(EnderecoException e, HttpServletRequest request){
+		
+
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		StandardError error = new StandardError(Instant.now(), status.value(), "Erro ao cadastrar endereço", e.getMessage(), request.getRequestURI());
+
+		return ResponseEntity.status(status).body(error);
+		
+		
 	}
 }

@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import br.com.desafioattornatus.entities.Endereco;
 import br.com.desafioattornatus.entities.Pessoa;
+import br.com.desafioattornatus.entities.enums.TipoEndereco;
 import br.com.desafioattornatus.repositories.EnderecoRepository;
+import br.com.desafioattornatus.services.exceptions.EnderecoException;
 import br.com.desafioattornatus.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -36,6 +38,8 @@ public class EnderecoService {
 		Pessoa pessoa = pessoaService.findById(idPessoa);
 
 		obj.setId(null);
+		
+		verificarEndereco(pessoa.getEnderecos(), obj);
 
 		obj = repository.save(obj);
 
@@ -45,6 +49,7 @@ public class EnderecoService {
 
 		return obj;
 	}
+
 
 	public List<Endereco> createAll(List<Endereco> listObj) {
 
@@ -83,5 +88,24 @@ public class EnderecoService {
 		}
 
 		repository.deleteById(idEndereco);
+	}
+	
+
+	private void verificarEndereco(List<Endereco> enderecos, Endereco obj) {
+		
+		if(obj.getTipoEndereco() == TipoEndereco.PRINCIPAL) {
+			
+			for (Endereco endereco : enderecos) {
+				
+				if(endereco.getTipoEndereco() == TipoEndereco.PRINCIPAL) {
+					
+					throw new EnderecoException("Já existe um endereço principal definido");
+					
+				}
+			}
+		}
+
+		
+		
 	}
 }
