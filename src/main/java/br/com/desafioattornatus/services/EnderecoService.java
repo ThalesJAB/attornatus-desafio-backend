@@ -55,6 +55,7 @@ public class EnderecoService {
 				.findFirst().orElseThrow(() -> new ObjectNotFoundException(
 						"Objeto Não Encontrado! Id: " + idEndereco + ", Tipo: " + Endereco.class.getName()));
 
+		obj.setId(enderecoAtualizado.getId());
 		verificarEndereco(pessoa.getEnderecos(), obj);
 
 		enderecoAtualizado.setCep(obj.getCep());
@@ -87,7 +88,9 @@ public class EnderecoService {
 
 				if (endereco.getTipoEndereco() == TipoEndereco.PRINCIPAL) {
 
-					throw new EnderecoException("Já existe um endereço principal definido");
+					if (obj.getId() == null || !endereco.equals(obj)) {
+						throw new EnderecoException("Já existe um endereço principal definido");
+					}
 
 				}
 			}
