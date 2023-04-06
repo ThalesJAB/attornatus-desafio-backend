@@ -78,7 +78,7 @@ public class ResourceExceptionHandler {
 	public ResponseEntity<StandardError> enderecoError(EnderecoException e, HttpServletRequest request){
 		
 
-		HttpStatus status = HttpStatus.BAD_REQUEST;
+		HttpStatus status = HttpStatus.CONFLICT;
 		StandardError error = new StandardError(Instant.now(), status.value(), "Erro ao cadastrar endereço", e.getMessage(), request.getRequestURI());
 
 		return ResponseEntity.status(status).body(error);
