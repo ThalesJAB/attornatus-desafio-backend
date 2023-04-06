@@ -37,8 +37,6 @@ public class EnderecoService {
 
 		Pessoa pessoa = pessoaService.findById(idPessoa);
 
-		obj.setId(null);
-		
 		verificarEndereco(pessoa.getEnderecos(), obj);
 
 		obj = repository.save(obj);
@@ -50,23 +48,14 @@ public class EnderecoService {
 		return obj;
 	}
 
-
-	public List<Endereco> createAll(List<Endereco> listObj) {
-
-		for (Endereco endereco : listObj) {
-			endereco.setId(null);
-		}
-
-		return repository.saveAll(listObj);
-
-	}
-
 	public Endereco update(Long idPessoa, Long idEndereco, Endereco obj) {
 		Pessoa pessoa = pessoaService.findById(idPessoa);
 
 		Endereco enderecoAtualizado = pessoa.getEnderecos().stream().filter(e -> e.getId().equals(idEndereco))
 				.findFirst().orElseThrow(() -> new ObjectNotFoundException(
 						"Objeto Não Encontrado! Id: " + idEndereco + ", Tipo: " + Endereco.class.getName()));
+
+		verificarEndereco(pessoa.getEnderecos(), obj);
 
 		enderecoAtualizado.setCep(obj.getCep());
 		enderecoAtualizado.setCidade(obj.getCidade());
@@ -89,23 +78,21 @@ public class EnderecoService {
 
 		repository.deleteById(idEndereco);
 	}
-	
 
 	private void verificarEndereco(List<Endereco> enderecos, Endereco obj) {
-		
-		if(obj.getTipoEndereco() == TipoEndereco.PRINCIPAL) {
-			
+
+		if (obj.getTipoEndereco() == TipoEndereco.PRINCIPAL) {
+
 			for (Endereco endereco : enderecos) {
-				
-				if(endereco.getTipoEndereco() == TipoEndereco.PRINCIPAL) {
-					
+
+				if (endereco.getTipoEndereco() == TipoEndereco.PRINCIPAL) {
+
 					throw new EnderecoException("Já existe um endereço principal definido");
-					
+
 				}
 			}
 		}
 
-		
-		
 	}
+
 }
