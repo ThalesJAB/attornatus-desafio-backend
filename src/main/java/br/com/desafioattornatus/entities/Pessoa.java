@@ -84,6 +84,11 @@ public class Pessoa implements Serializable {
 	}
 
 	public void addEndereco(Endereco endereco) {
+		
+		if(this.enderecos == null) {
+			this.enderecos = new ArrayList<>();
+		}
+		
 		this.enderecos.add(endereco);
 	}
 
@@ -102,6 +107,12 @@ public class Pessoa implements Serializable {
 			return false;
 		Pessoa other = (Pessoa) obj;
 		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "Pessoa [id=" + id + ", nome=" + nome + ", dataNascimento=" + dataNascimento + ", enderecos=" + enderecos
+				+ "]";
 	}
 
 }
