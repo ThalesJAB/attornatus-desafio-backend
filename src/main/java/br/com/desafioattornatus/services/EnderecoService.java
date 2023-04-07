@@ -37,7 +37,7 @@ public class EnderecoService {
 
 		Pessoa pessoa = pessoaService.findById(idPessoa);
 
-		verificarEndereco(pessoa.getEnderecos(), obj);
+		verificarTipoEndereco(pessoa.getEnderecos(), obj);
 
 		obj = repository.save(obj);
 
@@ -51,12 +51,11 @@ public class EnderecoService {
 	public Endereco update(Long idPessoa, Long idEndereco, Endereco obj) {
 		Pessoa pessoa = pessoaService.findById(idPessoa);
 
-		Endereco enderecoAtualizado = pessoa.getEnderecos().stream().filter(e -> e.getId().equals(idEndereco))
-				.findFirst().orElseThrow(() -> new ObjectNotFoundException(
-						"Objeto Não Encontrado! Id: " + idEndereco + ", Tipo: " + Endereco.class.getName()));
+		Endereco enderecoAtualizado = verificarEnderecosDePessoa(pessoa.getEnderecos(), idEndereco);
 
 		obj.setId(enderecoAtualizado.getId());
-		verificarEndereco(pessoa.getEnderecos(), obj);
+
+		verificarTipoEndereco(pessoa.getEnderecos(), obj);
 
 		enderecoAtualizado.setCep(obj.getCep());
 		enderecoAtualizado.setCidade(obj.getCidade());
@@ -70,16 +69,14 @@ public class EnderecoService {
 	public void delete(Long idPessoa, Long idEndereco) {
 		Pessoa pessoa = pessoaService.findById(idPessoa);
 
-		boolean remove = pessoa.getEnderecos().removeIf((e -> e.getId().equals(idEndereco)));
+		verificarEnderecosDePessoa(pessoa.getEnderecos(), idEndereco);
 
-		if (!remove) {
-			throw new ObjectNotFoundException(
-					"Objeto Não Encontrado! Id: " + idEndereco + ", Tipo: " + Endereco.class.getName());
-		}
+		pessoa.getEnderecos().removeIf((e -> e.getId().equals(idEndereco)));
+
 		repository.deleteById(idEndereco);
 	}
 
-	private void verificarEndereco(List<Endereco> enderecos, Endereco obj) {
+	private void verificarTipoEndereco(List<Endereco> enderecos, Endereco obj) {
 
 		if (obj.getTipoEndereco() == TipoEndereco.PRINCIPAL) {
 
@@ -95,6 +92,26 @@ public class EnderecoService {
 			}
 		}
 
+	}
+
+	private Endereco verificarEnderecosDePessoa(List<Endereco> enderecosPessoa, Long idEndereco) {
+
+		Endereco resultado = null;
+
+		for (Endereco endereco : enderecosPessoa) {
+
+			if (endereco.getId() == idEndereco) {
+				resultado = endereco;
+				break;
+			}
+
+		}
+
+		if (resultado == null) {
+			throw new ObjectNotFoundException(
+					"Objeto Não Encontrado! Id: " + idEndereco + ", Tipo: " + Endereco.class.getName());
+		}
+		return resultado;
 	}
 
 }

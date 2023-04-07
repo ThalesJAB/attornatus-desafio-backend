@@ -108,7 +108,6 @@ class EnderecoServiceTest {
 
 	@Test
 	void whenFindByIdThenReturnAnObjectNotFoundException() {
-		//when(repository.findById(anyLong())).thenThrow(new ObjectNotFoundException("Objeto Não Encontrado! Id: " + anyLong() + ", Tipo: " + Endereco.class.getName()));
 		when(repository.findById(ID_ENDERECO)).thenReturn(enderecoOptional);
 		
 		try {
@@ -207,8 +206,8 @@ class EnderecoServiceTest {
 		when(repository.save(any())).thenReturn(endereco2);
 		
 		try {
-			pessoa.addEndereco(endereco2);
 			endereco2.setTipoEndereco(TipoEndereco.PRINCIPAL);
+			pessoa.addEndereco(endereco2);
 			service.update(ID_PESSOA, ID_ENDERECO2, endereco2);
 			
 			
