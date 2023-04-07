@@ -76,7 +76,6 @@ public class EnderecoService {
 			throw new ObjectNotFoundException(
 					"Objeto Não Encontrado! Id: " + idEndereco + ", Tipo: " + Endereco.class.getName());
 		}
-
 		repository.deleteById(idEndereco);
 	}
 
