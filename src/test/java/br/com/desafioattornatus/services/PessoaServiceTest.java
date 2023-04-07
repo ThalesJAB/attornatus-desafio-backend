@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import br.com.desafioattornatus.entities.Endereco;
 import br.com.desafioattornatus.entities.Pessoa;
 import br.com.desafioattornatus.repositories.PessoaRepository;
 import br.com.desafioattornatus.services.exceptions.ObjectNotFoundException;
@@ -118,7 +116,7 @@ class PessoaServiceTest {
 
 	@Test
 	void whenUpdateReturnSucess() {
-		when(repository.findById(any())).thenReturn(pessoaOptional);
+		when(repository.findById(anyLong())).thenReturn(pessoaOptional);
 		when(repository.save(any())).thenReturn(pessoa2);
 		
 		Pessoa response = service.update(ID_PESSOA, pessoa);
@@ -132,7 +130,7 @@ class PessoaServiceTest {
 
 	@Test
 	void whenUpdateReturnAnObjectNotFoundException() {
-		when(repository.findById(any())).thenThrow(new ObjectNotFoundException("Objeto Não Encontrado! Id: " + ID_PESSOA + ", Tipo: " + Pessoa.class.getName()));
+		when(repository.findById(anyLong())).thenThrow(new ObjectNotFoundException("Objeto Não Encontrado! Id: " + ID_PESSOA + ", Tipo: " + Pessoa.class.getName()));
 		
 		try {
 			
@@ -147,7 +145,7 @@ class PessoaServiceTest {
 
 	@Test
 	void WhenDeleteReturnSucess() {
-		when(repository.findById(any())).thenReturn(pessoaOptional);
+		when(repository.findById(anyLong())).thenReturn(pessoaOptional);
 		doNothing().when(repository).deleteById(anyLong());
 		
 		
@@ -157,7 +155,7 @@ class PessoaServiceTest {
 
 	@Test
 	void WhenDeleteReturnAnObjectNotFound() {
-		when(repository.findById(any())).thenThrow(new ObjectNotFoundException("Objeto Não Encontrado! Id: " + ID_PESSOA + ", Tipo: " + Pessoa.class.getName()));
+		when(repository.findById(anyLong())).thenThrow(new ObjectNotFoundException("Objeto Não Encontrado! Id: " + ID_PESSOA + ", Tipo: " + Pessoa.class.getName()));
 		
 		try {
 			service.delete(ID_PESSOA);
