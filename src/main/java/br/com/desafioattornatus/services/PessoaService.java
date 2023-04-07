@@ -29,8 +29,6 @@ public class PessoaService {
 	}
 
 	public Pessoa create(Pessoa obj) {
-		obj.setId(null);
-
 		return repository.save(obj);
 	}
 
@@ -46,6 +44,7 @@ public class PessoaService {
 	}
 
 	public void delete(Long id) {
+		findById(id);
 		repository.deleteById(id);
 
 	}
