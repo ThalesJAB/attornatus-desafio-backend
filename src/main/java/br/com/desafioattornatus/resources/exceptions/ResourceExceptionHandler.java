@@ -11,7 +11,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import br.com.desafioattornatus.services.exceptions.DataIntegrityViolationException;
 import br.com.desafioattornatus.services.exceptions.EnderecoException;
 import br.com.desafioattornatus.services.exceptions.ObjectNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,18 +20,8 @@ public class ResourceExceptionHandler {
 
 	@ExceptionHandler(ObjectNotFoundException.class)
 	public ResponseEntity<StandardError> resourceNotFound(ObjectNotFoundException e, HttpServletRequest request) {
-		String error = "Object not found";
+		String error = "Objeto não encontrado";
 		HttpStatus status = HttpStatus.NOT_FOUND;
-		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(),
-				request.getRequestURI());
-		return ResponseEntity.status(status).body(err);
-	}
-
-	@ExceptionHandler(DataIntegrityViolationException.class)
-	public ResponseEntity<StandardError> dataIntegrityViolationException(DataIntegrityViolationException e,
-			HttpServletRequest request) {
-		String error = "Data integrity violation";
-		HttpStatus status = HttpStatus.BAD_REQUEST;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(),
 				request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
@@ -79,7 +68,7 @@ public class ResourceExceptionHandler {
 		
 
 		HttpStatus status = HttpStatus.CONFLICT;
-		StandardError error = new StandardError(Instant.now(), status.value(), "Erro ao cadastrar endereço", e.getMessage(), request.getRequestURI());
+		StandardError error = new StandardError(Instant.now(), status.value(), "Erro em endereço", e.getMessage(), request.getRequestURI());
 
 		return ResponseEntity.status(status).body(error);
 		
