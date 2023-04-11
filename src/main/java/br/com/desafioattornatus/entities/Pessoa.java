@@ -8,6 +8,8 @@ import java.util.Objects;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +36,7 @@ public class Pessoa implements Serializable {
 
 	@NotNull(message = "Campo DATA DE NASCIMENTO é requerido")
 	@Past(message = "Data de nascimento deve ser no passado")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate dataNascimento;
 
 	@OneToMany(cascade = CascadeType.ALL)
