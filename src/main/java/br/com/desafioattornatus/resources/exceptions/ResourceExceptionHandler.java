@@ -51,7 +51,7 @@ public class ResourceExceptionHandler {
 		StandardError error = new StandardError(Instant.now(), status.value(), "Bad Request", e.getMessage(),
 				request.getRequestURI());
 
-		Throwable mostSpecificCause = e.getMostSpecificCause();
+		Throwable mostSpecificCause = e.getMostSpecificCause().fillInStackTrace();
 
 		if (mostSpecificCause instanceof DateTimeParseException) {
 			error.setError("Erro na validação dos campos");
