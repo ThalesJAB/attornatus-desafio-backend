@@ -38,7 +38,7 @@ public class EnderecoResource {
 
 		Endereco enderecoNovo = service.create(idPessoa, endereco);
 
-		return ResponseEntity.ok().body(enderecoNovo);
+		return ResponseEntity.created(null).body(enderecoNovo);
 
 	}
 
