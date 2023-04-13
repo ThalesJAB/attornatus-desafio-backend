@@ -29,6 +29,11 @@ public class PessoaService {
 	}
 
 	public Pessoa create(Pessoa obj) {
+
+		if (obj.getEnderecos() != null) {
+			obj.getEnderecos().clear();
+		}
+
 		return repository.save(obj);
 	}
 
@@ -38,7 +43,7 @@ public class PessoaService {
 
 		entity.setDataNascimento(obj.getDataNascimento());
 		entity.setNome(obj.getNome());
-		
+
 		return repository.save(entity);
 
 	}
