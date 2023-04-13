@@ -30,12 +30,13 @@ Desafio Back-End da attornatus que consiste em criar uma API para gerenciar pess
 #### Testes unitários:
 - Mockito
 - JUnit
+- Relatório de testes: [Link](https://thalesjab.github.io/attornatus-desafio-backend/)
 #### Teste de cobertura:
 - [EclEmma](https://marketplace.eclipse.org/content/eclemma-java-code-coverage): ferramenta externa, instalada no Spring Tools Suite, que utiliza a biblioteca do JaCoCo
 
 ### Versionamento:
-- Git: repositorio local
-- Github: repositorio remoto para compartilhamento
+- Git: repositório local
+- Github: repositório remoto para compartilhamento
 
 ### Dependências do projeto:
 - org.springframework.boot:spring-boot-starter
