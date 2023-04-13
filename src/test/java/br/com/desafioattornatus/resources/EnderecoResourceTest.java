@@ -38,7 +38,7 @@ class EnderecoResourceTest {
 	private static final LocalDate DATA_DE_NASCIMENTO = LocalDate.of(2003, 6, 26);
 
 	private static final String NOME_PESSOA = "Mateus";
-	
+
 	private static final Long ID_ENDERECO2 = 2L;
 
 	private static final TipoEndereco TIPO_ENDERECO2 = TipoEndereco.SECUNDARIO;
@@ -62,10 +62,10 @@ class EnderecoResourceTest {
 	private static final Long ID_ENDERECO = 1L;
 
 	private static final String LOGRADOURO = "Rua D";
-	
+
 	@InjectMocks
 	private EnderecoResource resource;
-	
+
 	@Mock
 	private EnderecoService service;
 
@@ -82,7 +82,6 @@ class EnderecoResourceTest {
 		MockitoAnnotations.openMocks(this);
 		start();
 	}
-
 
 	@Test
 	void whenFindAllThenReturnAnListOfPessoa() {
@@ -105,6 +104,28 @@ class EnderecoResourceTest {
 		assertEquals(NUMERO, response.getBody().get(0).getNumero());
 		assertEquals(CEP, response.getBody().get(0).getCep());
 		assertEquals(TIPO_ENDERECO, response.getBody().get(0).getTipoEndereco());
+
+	}
+
+	@Test
+	void whenFindByEnderecoPrincipalThenReturnAnListOfPessoa() {
+		
+		when(service.findByEnderecoPrincipal(anyLong())).thenReturn(endereco);
+
+		
+		ResponseEntity<Endereco> response = resource.findByEnderecoPrincipal(ID_PESSOA);
+		assertNotNull(response);
+		assertNotNull(response.getBody());
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(ResponseEntity.class, response.getClass());
+		assertEquals(Endereco.class, response.getBody().getClass());
+		
+		assertEquals(ID_ENDERECO, response.getBody().getId());
+		assertEquals(LOGRADOURO, response.getBody().getLogradouro());
+		assertEquals(CIDADE, response.getBody().getCidade());
+		assertEquals(NUMERO, response.getBody().getNumero());
+		assertEquals(CEP, response.getBody().getCep());
+		assertEquals(TIPO_ENDERECO, response.getBody().getTipoEndereco());
 
 	}
 
@@ -163,21 +184,22 @@ class EnderecoResourceTest {
 	@Test
 	void testDelete() {
 		doNothing().when(service).delete(anyLong(), anyLong());
-		
+
 		ResponseEntity<Void> response = resource.delete(ID_PESSOA, ID_ENDERECO);
-		
+
 		assertNotNull(response);
 		assertEquals(ResponseEntity.class, response.getClass());
-		
+
 		verify(service, times(1)).delete(anyLong(), anyLong());
 		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 	}
-	
 
 	private void start() {
 		endereco = new Endereco(ID_ENDERECO, LOGRADOURO, CEP, NUMERO, CIDADE, TIPO_ENDERECO);
 		endereco2 = new Endereco(ID_ENDERECO2, LOGRADOURO2, CEP2, NUMERO2, CIDADE2, TIPO_ENDERECO2);
-		pessoa = new Pessoa(ID_PESSOA, NOME_PESSOA, DATA_DE_NASCIMENTO, new ArrayList<>(Arrays.asList(endereco, endereco2)));;
+		pessoa = new Pessoa(ID_PESSOA, NOME_PESSOA, DATA_DE_NASCIMENTO,
+				new ArrayList<>(Arrays.asList(endereco, endereco2)));
+		;
 		objectMapper = new ObjectMapper();
 	}
 

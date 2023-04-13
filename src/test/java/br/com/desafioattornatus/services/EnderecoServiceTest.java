@@ -120,6 +120,37 @@ class EnderecoServiceTest {
 	}
 
 	@Test
+	void whenFindByEnderecoPrincipalThenReturnAnEnderecoInstance() {
+		when(repository.findAllByPessoa(anyLong())).thenReturn(new ArrayList<>(List.of(endereco, endereco2)));
+	
+		Endereco response = service.findByEnderecoPrincipal(ID_PESSOA);
+
+		assertNotNull(response);
+		assertEquals(Endereco.class, response.getClass());
+		assertEquals(ID_ENDERECO, response.getId());
+		assertEquals(LOGRADOURO, response.getLogradouro());
+		assertEquals(CIDADE, response.getCidade());
+		assertEquals(NUMERO, response.getNumero());
+		assertEquals(CEP, response.getCep());
+		assertEquals(TIPO_ENDERECO, response.getTipoEndereco());
+
+	}
+
+	@Test
+	void whenFindByEnderecoPrincipalThenReturnAnEnderecoException() {
+		when(repository.findAllByPessoa(anyLong())).thenReturn(new ArrayList<>(List.of(endereco2)));
+	
+		try {
+				service.findByEnderecoPrincipal(ID_PESSOA);
+		
+		}catch(Exception e) {
+			assertEquals(EnderecoException.class, e.getClass());
+			assertEquals("Você não possui um endereço principal", e.getMessage());
+		}
+
+	}
+
+	@Test
 	void whenFindAllThenReturnAnListOfEnderecos() {
 		when(repository.findAllByPessoa(anyLong())).thenReturn(List.of(endereco));
 		
