@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PessoaServiceTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">attornatus-desafio-backend (13 de abr. de 2023 01:41:15)</a> &gt; <a href="../../index.html" class="el_group">attornatus-desafio-backend</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">br.com.desafioattornatus.services</a> &gt; <span class="el_source">PessoaServiceTest.java</span></div><h1>PessoaServiceTest.java</h1><pre class="source lang-java linenums">package br.com.desafioattornatus.services;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import br.com.desafioattornatus.entities.Pessoa;
+import br.com.desafioattornatus.repositories.PessoaRepository;
+import br.com.desafioattornatus.services.exceptions.ObjectNotFoundException;
+
+@SpringBootTest
+<span class="fc" id="L28">class PessoaServiceTest {</span>
+
+<span class="fc" id="L30">	private static final LocalDate DATA_DE_NASCIMENTO2 = LocalDate.of(2000, 8, 03);</span>
+
+	private static final String NOME2 = &quot;Thales&quot;;
+
+	private static final long ID_PESSOA2 = 2L;
+
+<span class="fc" id="L36">	private static final LocalDate DATA_DE_NASCIMENTO = LocalDate.of(1969, 11, 15);</span>
+
+	private static final String NOME = &quot;Ricardo&quot;;
+
+<span class="fc" id="L40">	private static final long ID_PESSOA = 1L;</span>
+
+	@InjectMocks
+	private PessoaService service;
+
+	@Mock
+	private PessoaRepository repository;
+
+	private Pessoa pessoa;
+
+	private Pessoa pessoa2;
+
+	private Optional&lt;Pessoa&gt; pessoaOptional;
+
+	@BeforeEach
+	void setUp() throws Exception {
+<span class="fc" id="L56">		MockitoAnnotations.openMocks(this);</span>
+<span class="fc" id="L57">		start();</span>
+<span class="fc" id="L58">	}</span>
+
+	@Test
+	void whenFindByIdThenReturnAnPessoaInstance() {
+<span class="fc" id="L62">		when(repository.findById(anyLong())).thenReturn(pessoaOptional);</span>
+
+<span class="fc" id="L64">		Pessoa response = service.findById(ID_PESSOA);</span>
+
+<span class="fc" id="L66">		assertNotNull(response);</span>
+<span class="fc" id="L67">		assertEquals(Pessoa.class, response.getClass());</span>
+<span class="fc" id="L68">		assertEquals(ID_PESSOA, response.getId());</span>
+<span class="fc" id="L69">		assertEquals(NOME, response.getNome());</span>
+<span class="fc" id="L70">		assertEquals(DATA_DE_NASCIMENTO, response.getDataNascimento());</span>
+
+
+<span class="fc" id="L73">	}</span>
+
+	@Test
+	void whenFindByIdThenReturnAnObjectNotFoundException() {
+<span class="fc" id="L77">		when(repository.findById(ID_PESSOA)).thenReturn(pessoaOptional);</span>
+		
+		try {
+<span class="nc" id="L80">			service.findById(ID_PESSOA2);</span>
+			
+<span class="pc" id="L82">		}catch(Exception e) {</span>
+<span class="fc" id="L83">			assertEquals(ObjectNotFoundException.class, e.getClass());</span>
+<span class="fc" id="L84">			assertEquals(&quot;Objeto Não Encontrado! Id: &quot; + ID_PESSOA2 + &quot;, Tipo: &quot; + Pessoa.class.getName(), e.getMessage());</span>
+		}
+<span class="fc" id="L86">	}</span>
+
+	@Test
+	void whenFindAllThenReturnAnListOfPessoas() {
+<span class="fc" id="L90">		when(repository.findAll()).thenReturn(List.of(pessoa, pessoa2));</span>
+		
+<span class="fc" id="L92">		List&lt;Pessoa&gt; response = service.findAll();</span>
+		
+<span class="fc" id="L94">		assertNotNull(response);</span>
+<span class="fc" id="L95">		assertEquals(2, response.size());</span>
+<span class="fc" id="L96">		assertEquals(Pessoa.class, response.get(0).getClass());</span>
+<span class="fc" id="L97">		assertEquals(ID_PESSOA, response.get(0).getId());</span>
+<span class="fc" id="L98">		assertEquals(NOME, response.get(0).getNome());</span>
+<span class="fc" id="L99">		assertEquals(DATA_DE_NASCIMENTO, response.get(0).getDataNascimento());</span>
+
+<span class="fc" id="L101">	}</span>
+
+	@Test
+	void whenCreateReturnSucess() {
+<span class="fc" id="L105">		when(repository.save(any())).thenReturn(pessoa);</span>
+		
+<span class="fc" id="L107">		Pessoa response = service.create(pessoa);</span>
+		
+<span class="fc" id="L109">		assertNotNull(response);</span>
+<span class="fc" id="L110">		assertEquals(Pessoa.class, response.getClass());</span>
+<span class="fc" id="L111">		assertEquals(ID_PESSOA, response.getId());</span>
+<span class="fc" id="L112">		assertEquals(NOME, response.getNome());</span>
+<span class="fc" id="L113">		assertEquals(DATA_DE_NASCIMENTO, response.getDataNascimento());</span>
+		
+<span class="fc" id="L115">	}</span>
+
+	@Test
+	void whenUpdateReturnSucess() {
+<span class="fc" id="L119">		when(repository.findById(anyLong())).thenReturn(pessoaOptional);</span>
+<span class="fc" id="L120">		when(repository.save(any())).thenReturn(pessoa2);</span>
+		
+<span class="fc" id="L122">		Pessoa response = service.update(ID_PESSOA, pessoa);</span>
+		
+<span class="fc" id="L124">		assertNotNull(response);</span>
+<span class="fc" id="L125">		assertEquals(Pessoa.class, response.getClass());</span>
+<span class="fc" id="L126">		assertEquals(NOME2, response.getNome());</span>
+<span class="fc" id="L127">		assertEquals(DATA_DE_NASCIMENTO2, response.getDataNascimento());</span>
+		
+<span class="fc" id="L129">	}</span>
+
+	@Test
+	void whenUpdateReturnAnObjectNotFoundException() {
+<span class="fc" id="L133">		when(repository.findById(anyLong())).thenThrow(new ObjectNotFoundException(&quot;Objeto Não Encontrado! Id: &quot; + ID_PESSOA + &quot;, Tipo: &quot; + Pessoa.class.getName()));</span>
+		
+		try {
+			
+<span class="nc" id="L137">			service.update(ID_PESSOA, pessoa);</span>
+			
+<span class="pc" id="L139">		} catch(Exception e) {</span>
+<span class="fc" id="L140">			assertEquals(ObjectNotFoundException.class, e.getClass());</span>
+<span class="fc" id="L141">			assertEquals(&quot;Objeto Não Encontrado! Id: &quot; + ID_PESSOA + &quot;, Tipo: &quot; + Pessoa.class.getName(), e.getMessage());</span>
+		}
+	
+<span class="fc" id="L144">	}</span>
+
+	@Test
+	void WhenDeleteReturnSucess() {
+<span class="fc" id="L148">		when(repository.findById(anyLong())).thenReturn(pessoaOptional);</span>
+<span class="fc" id="L149">		doNothing().when(repository).deleteById(anyLong());</span>
+		
+		
+<span class="fc" id="L152">		service.delete(ID_PESSOA);</span>
+<span class="fc" id="L153">		verify(repository, times(1)).deleteById(anyLong());;</span>
+<span class="fc" id="L154">	}</span>
+
+	@Test
+	void WhenDeleteReturnAnObjectNotFound() {
+<span class="fc" id="L158">		when(repository.findById(anyLong())).thenThrow(new ObjectNotFoundException(&quot;Objeto Não Encontrado! Id: &quot; + ID_PESSOA + &quot;, Tipo: &quot; + Pessoa.class.getName()));</span>
+		
+		try {
+<span class="nc" id="L161">			service.delete(ID_PESSOA);</span>
+<span class="pc" id="L162">		}catch(Exception e) {</span>
+<span class="fc" id="L163">			assertEquals(ObjectNotFoundException.class, e.getClass());</span>
+<span class="fc" id="L164">			assertEquals(&quot;Objeto Não Encontrado! Id: &quot; + ID_PESSOA + &quot;, Tipo: &quot; + Pessoa.class.getName(), e.getMessage());</span>
+		}
+		
+		
+		
+<span class="fc" id="L169">	}</span>
+
+	private void start() {
+<span class="fc" id="L172">		pessoa = new Pessoa(ID_PESSOA, NOME, DATA_DE_NASCIMENTO, null);</span>
+<span class="fc" id="L173">		pessoa2 = new Pessoa(ID_PESSOA2, NOME2, DATA_DE_NASCIMENTO2, null);</span>
+<span class="fc" id="L174">		pessoaOptional = Optional.of(new Pessoa(ID_PESSOA, NOME, DATA_DE_NASCIMENTO, null));</span>
+<span class="fc" id="L175">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>attornatus-desafio-backend (13 de abr. de 2023 01:41:15)</div></body></html>

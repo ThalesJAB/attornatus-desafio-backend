@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PessoaResourceTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">attornatus-desafio-backend (13 de abr. de 2023 01:41:15)</a> &gt; <a href="../../index.html" class="el_group">attornatus-desafio-backend</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">br.com.desafioattornatus.resources</a> &gt; <span class="el_source">PessoaResourceTest.java</span></div><h1>PessoaResourceTest.java</h1><pre class="source lang-java linenums">package br.com.desafioattornatus.resources;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.URI;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import br.com.desafioattornatus.entities.Pessoa;
+import br.com.desafioattornatus.services.PessoaService;
+
+@SpringBootTest
+<span class="fc" id="L36">class PessoaResourceTest {</span>
+
+<span class="fc" id="L38">	private static final LocalDate DATA_DE_NASCIMENTO2 = LocalDate.of(2000, 8, 03);</span>
+
+	private static final String NOME2 = &quot;Thales&quot;;
+
+	private static final long ID_PESSOA2 = 2L;
+
+<span class="fc" id="L44">	private static final LocalDate DATA_DE_NASCIMENTO = LocalDate.of(1969, 11, 15);</span>
+
+	private static final String NOME = &quot;Ricardo&quot;;
+
+<span class="fc" id="L48">	private static final long ID_PESSOA = 1L;</span>
+
+	@InjectMocks
+	private PessoaResource resource;
+
+	@Mock
+	private PessoaService service;
+
+	private ObjectMapper objectMapper;
+
+	private Pessoa pessoa;
+
+	private Pessoa pessoa2;
+
+	private Optional&lt;Pessoa&gt; pessoaOptional;
+
+	@BeforeEach
+	void setUp() throws Exception {
+<span class="fc" id="L66">		MockitoAnnotations.openMocks(this);</span>
+<span class="fc" id="L67">		start();</span>
+<span class="fc" id="L68">	}</span>
+
+	@Test
+	void whenFindByIdThenReturnSucess() {
+<span class="fc" id="L72">		when(service.findById(anyLong())).thenReturn(pessoa);</span>
+		
+<span class="fc" id="L74">		ResponseEntity&lt;Pessoa&gt; response = resource.findById(ID_PESSOA);</span>
+		
+<span class="fc" id="L76">		assertNotNull(response);</span>
+<span class="fc" id="L77">		assertNotNull(response.getBody());</span>
+<span class="fc" id="L78">		assertEquals(ResponseEntity.class, response.getClass());</span>
+<span class="fc" id="L79">		assertEquals(Pessoa.class, response.getBody().getClass());</span>
+		
+<span class="fc" id="L81">		assertEquals(ID_PESSOA, response.getBody().getId());</span>
+<span class="fc" id="L82">		assertEquals(NOME, response.getBody().getNome());</span>
+<span class="fc" id="L83">		assertEquals(DATA_DE_NASCIMENTO, response.getBody().getDataNascimento());</span>
+		
+<span class="fc" id="L85">	}</span>
+
+	@Test
+	void whenFindAllThenReturnAnListOfPessoas() {
+		
+<span class="fc" id="L90">		when(service.findAll()).thenReturn(new ArrayList&lt;&gt;(List.of(pessoa, pessoa2)));</span>
+
+		
+<span class="fc" id="L93">		ResponseEntity&lt;List&lt;Pessoa&gt;&gt; response = resource.findAll();</span>
+<span class="fc" id="L94">		assertNotNull(response);</span>
+<span class="fc" id="L95">		assertNotNull(response.getBody());</span>
+<span class="fc" id="L96">		assertEquals(HttpStatus.OK, response.getStatusCode());</span>
+<span class="fc" id="L97">		assertEquals(ResponseEntity.class, response.getClass());</span>
+<span class="fc" id="L98">		assertEquals(ArrayList.class, response.getBody().getClass());</span>
+<span class="fc" id="L99">		assertEquals(Pessoa.class, response.getBody().get(0).getClass());</span>
+		
+<span class="fc" id="L101">		assertEquals(2, response.getBody().size());</span>
+<span class="fc" id="L102">		assertEquals(ID_PESSOA2, response.getBody().get(1).getId());</span>
+<span class="fc" id="L103">		assertEquals(NOME2, response.getBody().get(1).getNome());</span>
+<span class="fc" id="L104">		assertEquals(DATA_DE_NASCIMENTO2, response.getBody().get(1).getDataNascimento());</span>
+		
+<span class="fc" id="L106">	}</span>
+
+	@Test
+	void whenCreateReturnSucess() throws JsonProcessingException {
+<span class="fc" id="L110">		when(service.create(any())).thenReturn(pessoa);</span>
+		
+<span class="fc" id="L112">		ResponseEntity&lt;Pessoa&gt; response = resource.create(pessoa);</span>
+<span class="fc" id="L113">		assertNotNull(response);</span>
+<span class="fc" id="L114">		assertNotNull(response.getBody());</span>
+<span class="fc" id="L115">		assertEquals(HttpStatus.CREATED, response.getStatusCode());</span>
+<span class="fc" id="L116">		assertEquals(ResponseEntity.class, response.getClass());</span>
+<span class="fc" id="L117">		assertEquals(Pessoa.class, response.getBody().getClass());</span>
+		
+<span class="fc" id="L119">		assertNotNull(response.getHeaders().getLocation());</span>
+<span class="fc" id="L120">        URI expectedUri = ServletUriComponentsBuilder.fromCurrentRequest().path(&quot;/{id}&quot;).buildAndExpand(pessoa.getId()).toUri();</span>
+<span class="fc" id="L121">        assertEquals(expectedUri, response.getHeaders().getLocation());</span>
+
+<span class="fc" id="L123">        String expectedJson = &quot;{\&quot;id\&quot;:1,\&quot;nome\&quot;:\&quot;Ricardo\&quot;,\&quot;dataNascimento\&quot;:\&quot;1969-11-15\&quot;,\&quot;enderecos\&quot;:null}&quot;;</span>
+<span class="fc" id="L124">        String atualJson = objectMapper.writeValueAsString(response.getBody());</span>
+<span class="fc" id="L125">        assertEquals(expectedJson, atualJson);</span>
+		
+		
+<span class="fc" id="L128">		assertEquals(ID_PESSOA, response.getBody().getId());</span>
+<span class="fc" id="L129">		assertEquals(NOME, response.getBody().getNome());</span>
+<span class="fc" id="L130">		assertEquals(DATA_DE_NASCIMENTO, response.getBody().getDataNascimento());</span>
+
+<span class="fc" id="L132">	}</span>
+
+	@Test
+	void WhenUpdateReturnSucess() throws JsonProcessingException {
+<span class="fc" id="L136">		when(service.update(anyLong(), any())).thenReturn(pessoa);</span>
+		
+<span class="fc" id="L138">		ResponseEntity&lt;Pessoa&gt; response = resource.update(ID_PESSOA, pessoa2);</span>
+		
+<span class="fc" id="L140">		assertNotNull(response);</span>
+<span class="fc" id="L141">		assertNotNull(response.getBody());</span>
+<span class="fc" id="L142">		assertEquals(HttpStatus.OK, response.getStatusCode());</span>
+<span class="fc" id="L143">		assertEquals(ResponseEntity.class, response.getClass());</span>
+<span class="fc" id="L144">		assertEquals(Pessoa.class, response.getBody().getClass());</span>
+		
+<span class="fc" id="L146">		assertEquals(ID_PESSOA, response.getBody().getId());</span>
+<span class="fc" id="L147">		assertEquals(NOME, response.getBody().getNome());</span>
+<span class="fc" id="L148">		assertEquals(DATA_DE_NASCIMENTO, response.getBody().getDataNascimento());</span>
+		
+	
+<span class="fc" id="L151">		String expectedJson = &quot;{\&quot;id\&quot;:1,\&quot;nome\&quot;:\&quot;Ricardo\&quot;,\&quot;dataNascimento\&quot;:\&quot;1969-11-15\&quot;,\&quot;enderecos\&quot;:null}&quot;;</span>
+<span class="fc" id="L152">        String atualJson = objectMapper.writeValueAsString(response.getBody());</span>
+<span class="fc" id="L153">        assertEquals(expectedJson, atualJson);</span>
+<span class="fc" id="L154">	}</span>
+
+	@Test
+	void whenDeleteThenReturnSucess() {
+<span class="fc" id="L158">		doNothing().when(service).delete(anyLong());</span>
+		
+<span class="fc" id="L160">		ResponseEntity&lt;Void&gt; response = resource.delete(ID_PESSOA);</span>
+		
+<span class="fc" id="L162">		assertNotNull(response);</span>
+<span class="fc" id="L163">		assertEquals(ResponseEntity.class, response.getClass());</span>
+		
+<span class="fc" id="L165">		verify(service, times(1)).delete(anyLong());</span>
+<span class="fc" id="L166">		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());</span>
+		
+<span class="fc" id="L168">	}</span>
+
+	private void start() {
+<span class="fc" id="L171">		pessoa = new Pessoa(ID_PESSOA, NOME, DATA_DE_NASCIMENTO, null);</span>
+<span class="fc" id="L172">		pessoa2 = new Pessoa(ID_PESSOA2, NOME2, DATA_DE_NASCIMENTO2, null);</span>
+<span class="fc" id="L173">		pessoaOptional = Optional.of(new Pessoa(ID_PESSOA, NOME, DATA_DE_NASCIMENTO, null));</span>
+<span class="fc" id="L174">		objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L175">		objectMapper.registerModule(new JavaTimeModule());</span>
+
+<span class="fc" id="L177">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>attornatus-desafio-backend (13 de abr. de 2023 01:41:15)</div></body></html>

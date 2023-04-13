@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>EnderecoResourceTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">attornatus-desafio-backend (13 de abr. de 2023 01:41:15)</a> &gt; <a href="../../index.html" class="el_group">attornatus-desafio-backend</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">br.com.desafioattornatus.resources</a> &gt; <span class="el_source">EnderecoResourceTest.java</span></div><h1>EnderecoResourceTest.java</h1><pre class="source lang-java linenums">package br.com.desafioattornatus.resources;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.desafioattornatus.entities.Endereco;
+import br.com.desafioattornatus.entities.Pessoa;
+import br.com.desafioattornatus.entities.enums.TipoEndereco;
+import br.com.desafioattornatus.services.EnderecoService;
+
+@SpringBootTest
+<span class="fc" id="L35">class EnderecoResourceTest {</span>
+<span class="fc" id="L36">	private static final Long ID_PESSOA = 1L;</span>
+
+<span class="fc" id="L38">	private static final LocalDate DATA_DE_NASCIMENTO = LocalDate.of(2003, 6, 26);</span>
+
+	private static final String NOME_PESSOA = &quot;Mateus&quot;;
+
+<span class="fc" id="L42">	private static final Long ID_ENDERECO2 = 2L;</span>
+
+<span class="fc" id="L44">	private static final TipoEndereco TIPO_ENDERECO2 = TipoEndereco.SECUNDARIO;</span>
+
+	private static final String CEP2 = &quot;53432-421&quot;;
+
+<span class="fc" id="L48">	private static final Integer NUMERO2 = 453;</span>
+
+	private static final String CIDADE2 = &quot;São Paulo&quot;;
+
+	private static final String LOGRADOURO2 = &quot;Rua x&quot;;
+
+<span class="fc" id="L54">	private static final TipoEndereco TIPO_ENDERECO = TipoEndereco.PRINCIPAL;</span>
+
+	private static final String CIDADE = &quot;Curitiba&quot;;
+
+<span class="fc" id="L58">	private static final Integer NUMERO = 40;</span>
+
+	private static final String CEP = &quot;34567-890&quot;;
+
+<span class="fc" id="L62">	private static final Long ID_ENDERECO = 1L;</span>
+
+<span class="fc" id="L64">	private static final String LOGRADOURO = &quot;Rua D&quot;;</span>
+
+	@InjectMocks
+	private EnderecoResource resource;
+
+	@Mock
+	private EnderecoService service;
+
+	private Endereco endereco;
+
+	private Endereco endereco2;
+
+	private Pessoa pessoa;
+
+	private ObjectMapper objectMapper;
+
+	@BeforeEach
+	void setUp() throws Exception {
+<span class="fc" id="L82">		MockitoAnnotations.openMocks(this);</span>
+<span class="fc" id="L83">		start();</span>
+<span class="fc" id="L84">	}</span>
+
+	@Test
+	void whenFindAllThenReturnAnListOfPessoa() {
+		
+<span class="fc" id="L89">		when(service.findAll(anyLong())).thenReturn(new ArrayList&lt;&gt;(List.of(endereco, endereco2)));</span>
+
+		
+<span class="fc" id="L92">		ResponseEntity&lt;List&lt;Endereco&gt;&gt; response = resource.findAll(ID_PESSOA);</span>
+<span class="fc" id="L93">		assertNotNull(response);</span>
+<span class="fc" id="L94">		assertNotNull(response.getBody());</span>
+<span class="fc" id="L95">		assertEquals(HttpStatus.OK, response.getStatusCode());</span>
+<span class="fc" id="L96">		assertEquals(ResponseEntity.class, response.getClass());</span>
+<span class="fc" id="L97">		assertEquals(ArrayList.class, response.getBody().getClass());</span>
+<span class="fc" id="L98">		assertEquals(Endereco.class, response.getBody().get(0).getClass());</span>
+		
+<span class="fc" id="L100">		assertEquals(2, response.getBody().size());</span>
+<span class="fc" id="L101">		assertEquals(ID_ENDERECO, response.getBody().get(0).getId());</span>
+<span class="fc" id="L102">		assertEquals(LOGRADOURO, response.getBody().get(0).getLogradouro());</span>
+<span class="fc" id="L103">		assertEquals(CIDADE, response.getBody().get(0).getCidade());</span>
+<span class="fc" id="L104">		assertEquals(NUMERO, response.getBody().get(0).getNumero());</span>
+<span class="fc" id="L105">		assertEquals(CEP, response.getBody().get(0).getCep());</span>
+<span class="fc" id="L106">		assertEquals(TIPO_ENDERECO, response.getBody().get(0).getTipoEndereco());</span>
+
+<span class="fc" id="L108">	}</span>
+
+	@Test
+	void whenFindByEnderecoPrincipalThenReturnAnListOfPessoa() {
+		
+<span class="fc" id="L113">		when(service.findByEnderecoPrincipal(anyLong())).thenReturn(endereco);</span>
+
+		
+<span class="fc" id="L116">		ResponseEntity&lt;Endereco&gt; response = resource.findByEnderecoPrincipal(ID_PESSOA);</span>
+<span class="fc" id="L117">		assertNotNull(response);</span>
+<span class="fc" id="L118">		assertNotNull(response.getBody());</span>
+<span class="fc" id="L119">		assertEquals(HttpStatus.OK, response.getStatusCode());</span>
+<span class="fc" id="L120">		assertEquals(ResponseEntity.class, response.getClass());</span>
+<span class="fc" id="L121">		assertEquals(Endereco.class, response.getBody().getClass());</span>
+		
+<span class="fc" id="L123">		assertEquals(ID_ENDERECO, response.getBody().getId());</span>
+<span class="fc" id="L124">		assertEquals(LOGRADOURO, response.getBody().getLogradouro());</span>
+<span class="fc" id="L125">		assertEquals(CIDADE, response.getBody().getCidade());</span>
+<span class="fc" id="L126">		assertEquals(NUMERO, response.getBody().getNumero());</span>
+<span class="fc" id="L127">		assertEquals(CEP, response.getBody().getCep());</span>
+<span class="fc" id="L128">		assertEquals(TIPO_ENDERECO, response.getBody().getTipoEndereco());</span>
+
+<span class="fc" id="L130">	}</span>
+
+	@Test
+	void whenCreateReturnSucess() throws JsonProcessingException {
+<span class="fc" id="L134">		when(service.create(anyLong(), any())).thenReturn(endereco);</span>
+		
+<span class="fc" id="L136">		ResponseEntity&lt;Endereco&gt; response = resource.create(ID_PESSOA, endereco);</span>
+<span class="fc" id="L137">		assertNotNull(response);</span>
+<span class="fc" id="L138">		assertNotNull(response.getBody());</span>
+<span class="fc" id="L139">		assertEquals(HttpStatus.CREATED, response.getStatusCode());</span>
+<span class="fc" id="L140">		assertEquals(ResponseEntity.class, response.getClass());</span>
+<span class="fc" id="L141">		assertEquals(Endereco.class, response.getBody().getClass());</span>
+		
+<span class="fc" id="L143">		assertEquals(ID_ENDERECO, response.getBody().getId());</span>
+<span class="fc" id="L144">		assertEquals(LOGRADOURO, response.getBody().getLogradouro());</span>
+<span class="fc" id="L145">		assertEquals(CIDADE, response.getBody().getCidade());</span>
+<span class="fc" id="L146">		assertEquals(NUMERO, response.getBody().getNumero());</span>
+<span class="fc" id="L147">		assertEquals(CEP, response.getBody().getCep());</span>
+<span class="fc" id="L148">		assertEquals(TIPO_ENDERECO, response.getBody().getTipoEndereco());</span>
+		
+<span class="fc" id="L150">        String expectedJson = &quot;{\&quot;id\&quot;:1,\&quot;logradouro\&quot;:\&quot;Rua D\&quot;,\&quot;cep\&quot;:\&quot;34567-890\&quot;,\&quot;numero\&quot;:40,\&quot;cidade\&quot;:\&quot;Curitiba\&quot;,\&quot;tipoEndereco\&quot;:\&quot;PRINCIPAL\&quot;}&quot;;</span>
+<span class="fc" id="L151">        String atualJson = objectMapper.writeValueAsString(response.getBody());</span>
+<span class="fc" id="L152">        assertEquals(expectedJson, atualJson);</span>
+	
+		
+<span class="fc" id="L155">	}</span>
+
+	@Test
+	void whenUpdateReturnSucess() throws JsonProcessingException {
+<span class="fc" id="L159">		when(service.update(anyLong(),  anyLong(), any())).thenReturn(endereco);</span>
+		
+<span class="fc" id="L161">		ResponseEntity&lt;Endereco&gt; response = resource.update(ID_PESSOA, ID_ENDERECO, endereco2);</span>
+		
+<span class="fc" id="L163">		assertNotNull(response);</span>
+<span class="fc" id="L164">		assertNotNull(response.getBody());</span>
+<span class="fc" id="L165">		assertEquals(HttpStatus.OK, response.getStatusCode());</span>
+<span class="fc" id="L166">		assertEquals(ResponseEntity.class, response.getClass());</span>
+<span class="fc" id="L167">		assertEquals(Endereco.class, response.getBody().getClass());</span>
+		
+		
+<span class="fc" id="L170">		assertEquals(ID_ENDERECO, response.getBody().getId());</span>
+<span class="fc" id="L171">		assertEquals(LOGRADOURO, response.getBody().getLogradouro());</span>
+<span class="fc" id="L172">		assertEquals(CIDADE, response.getBody().getCidade());</span>
+<span class="fc" id="L173">		assertEquals(NUMERO, response.getBody().getNumero());</span>
+<span class="fc" id="L174">		assertEquals(CEP, response.getBody().getCep());</span>
+<span class="fc" id="L175">		assertEquals(TIPO_ENDERECO, response.getBody().getTipoEndereco());</span>
+		
+<span class="fc" id="L177">        String expectedJson = &quot;{\&quot;id\&quot;:1,\&quot;logradouro\&quot;:\&quot;Rua D\&quot;,\&quot;cep\&quot;:\&quot;34567-890\&quot;,\&quot;numero\&quot;:40,\&quot;cidade\&quot;:\&quot;Curitiba\&quot;,\&quot;tipoEndereco\&quot;:\&quot;PRINCIPAL\&quot;}&quot;;</span>
+<span class="fc" id="L178">        String atualJson = objectMapper.writeValueAsString(response.getBody());</span>
+<span class="fc" id="L179">        assertEquals(expectedJson, atualJson);</span>
+		
+		
+<span class="fc" id="L182">	}</span>
+
+	@Test
+	void testDelete() {
+<span class="fc" id="L186">		doNothing().when(service).delete(anyLong(), anyLong());</span>
+
+<span class="fc" id="L188">		ResponseEntity&lt;Void&gt; response = resource.delete(ID_PESSOA, ID_ENDERECO);</span>
+
+<span class="fc" id="L190">		assertNotNull(response);</span>
+<span class="fc" id="L191">		assertEquals(ResponseEntity.class, response.getClass());</span>
+
+<span class="fc" id="L193">		verify(service, times(1)).delete(anyLong(), anyLong());</span>
+<span class="fc" id="L194">		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());</span>
+<span class="fc" id="L195">	}</span>
+
+	private void start() {
+<span class="fc" id="L198">		endereco = new Endereco(ID_ENDERECO, LOGRADOURO, CEP, NUMERO, CIDADE, TIPO_ENDERECO);</span>
+<span class="fc" id="L199">		endereco2 = new Endereco(ID_ENDERECO2, LOGRADOURO2, CEP2, NUMERO2, CIDADE2, TIPO_ENDERECO2);</span>
+<span class="fc" id="L200">		pessoa = new Pessoa(ID_PESSOA, NOME_PESSOA, DATA_DE_NASCIMENTO,</span>
+<span class="fc" id="L201">				new ArrayList&lt;&gt;(Arrays.asList(endereco, endereco2)));</span>
+		;
+<span class="fc" id="L203">		objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L204">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>attornatus-desafio-backend (13 de abr. de 2023 01:41:15)</div></body></html>

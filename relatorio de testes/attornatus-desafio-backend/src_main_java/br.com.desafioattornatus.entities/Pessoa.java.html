@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>Pessoa.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">attornatus-desafio-backend (13 de abr. de 2023 01:41:15)</a> &gt; <a href="../../index.html" class="el_group">attornatus-desafio-backend</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">br.com.desafioattornatus.entities</a> &gt; <span class="el_source">Pessoa.java</span></div><h1>Pessoa.java</h1><pre class="source lang-java linenums">package br.com.desafioattornatus.entities;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+
+@Entity
+public class Pessoa implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@NotBlank(message = &quot;Campo NOME é requerido&quot;)
+	@Length(min = 3, max = 100, message = &quot;O campo NOME deve ter entre 3 e 100 caracteres&quot;)
+	private String nome;
+
+	@NotNull(message = &quot;Campo DATA DE NASCIMENTO é requerido&quot;)
+	@Past(message = &quot;Data de nascimento deve ser no passado&quot;)
+	@JsonFormat(pattern = &quot;yyyy-MM-dd&quot;)
+	private LocalDate dataNascimento;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = &quot;pessoa_id&quot;)
+<span class="fc" id="L44">	private List&lt;Endereco&gt; enderecos = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L46">	public Pessoa() {</span>
+
+<span class="fc" id="L48">	}</span>
+
+<span class="fc" id="L50">	public Pessoa(Long id, String nome, LocalDate dataNascimento, List&lt;Endereco&gt; enderecos) {</span>
+<span class="fc" id="L51">		this.id = id;</span>
+<span class="fc" id="L52">		this.nome = nome;</span>
+<span class="fc" id="L53">		this.dataNascimento = dataNascimento;</span>
+<span class="fc" id="L54">		this.enderecos = enderecos;</span>
+<span class="fc" id="L55">	}</span>
+
+	public Long getId() {
+<span class="fc" id="L58">		return id;</span>
+	}
+
+	public void setId(Long id) {
+<span class="nc" id="L62">		this.id = id;</span>
+<span class="nc" id="L63">	}</span>
+
+	public String getNome() {
+<span class="fc" id="L66">		return nome;</span>
+	}
+
+	public void setNome(String nome) {
+<span class="fc" id="L70">		this.nome = nome;</span>
+<span class="fc" id="L71">	}</span>
+
+	public LocalDate getDataNascimento() {
+<span class="fc" id="L74">		return dataNascimento;</span>
+	}
+
+	public void setDataNascimento(LocalDate dataNascimento) {
+<span class="fc" id="L78">		this.dataNascimento = dataNascimento;</span>
+<span class="fc" id="L79">	}</span>
+
+	public List&lt;Endereco&gt; getEnderecos() {
+<span class="fc" id="L82">		return enderecos;</span>
+	}
+
+	public void setEnderecos(List&lt;Endereco&gt; enderecos) {
+<span class="nc" id="L86">		this.enderecos = enderecos;</span>
+<span class="nc" id="L87">	}</span>
+
+	public void addEndereco(Endereco endereco) {
+		
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">		if(this.enderecos == null) {</span>
+<span class="nc" id="L92">			this.enderecos = new ArrayList&lt;&gt;();</span>
+		}
+		
+<span class="fc" id="L95">		this.enderecos.add(endereco);</span>
+<span class="fc" id="L96">	}</span>
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L100">		return Objects.hash(id);</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="nc bnc" id="L105" title="All 2 branches missed.">		if (this == obj)</span>
+<span class="nc" id="L106">			return true;</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">		if (obj == null)</span>
+<span class="nc" id="L108">			return false;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">		if (getClass() != obj.getClass())</span>
+<span class="nc" id="L110">			return false;</span>
+<span class="nc" id="L111">		Pessoa other = (Pessoa) obj;</span>
+<span class="nc" id="L112">		return Objects.equals(id, other.id);</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L117">		return &quot;Pessoa [id=&quot; + id + &quot;, nome=&quot; + nome + &quot;, dataNascimento=&quot; + dataNascimento + &quot;, enderecos=&quot; + enderecos</span>
+<span class="nc" id="L118">				+ &quot;]&quot;;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>attornatus-desafio-backend (13 de abr. de 2023 01:41:15)</div></body></html>
