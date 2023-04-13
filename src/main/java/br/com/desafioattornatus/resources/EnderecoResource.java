@@ -32,6 +32,15 @@ public class EnderecoResource {
 		return ResponseEntity.ok().body(enderecoList);
 
 	}
+	
+	@GetMapping(value="/principal")
+	public ResponseEntity<Endereco> findByEnderecoPrincipal(@PathVariable Long idPessoa) {
+
+		Endereco endereco = service.findByEnderecoPrincipal(idPessoa);
+
+		return ResponseEntity.ok().body(endereco);
+
+	}
 
 	@PostMapping
 	public ResponseEntity<Endereco> create(@Valid @PathVariable Long idPessoa, @RequestBody Endereco endereco) {

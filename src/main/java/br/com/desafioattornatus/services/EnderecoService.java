@@ -28,6 +28,16 @@ public class EnderecoService {
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto Não Encontrado! Id: " + id + ", Tipo: " + Endereco.class.getName()));
 	}
+	
+
+	public Endereco findByEnderecoPrincipal(Long idPessoa) {
+		List<Endereco> enderecos = findAll(idPessoa);
+		
+		Optional<Endereco> endereco = enderecos.stream().filter(e -> e.getTipoEndereco().equals(TipoEndereco.PRINCIPAL)).findFirst();
+		
+		return endereco.orElseThrow(() -> new EnderecoException("Você não possui um endereço principal"));
+		
+	}
 
 	public List<Endereco> findAll(Long idPessoa) {
 		return repository.findAllByPessoa(idPessoa);
@@ -113,5 +123,6 @@ public class EnderecoService {
 		}
 		return resultado;
 	}
+
 
 }
